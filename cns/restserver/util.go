@@ -413,9 +413,10 @@ func (service *HTTPRestService) getAllNetworkContainerResponses(
 		}
 		nmaNCs := map[string]string{}
 		for _, nc := range ncVersionListResp.Containers {
-			nmaNCs[cns.SwiftPrefix+nc.NetworkContainerID] = nc.Version
+			nmaNCs[cns.SwiftPrefix+strings.ToLower(nc.NetworkContainerID)] = nc.Version
 		}
 
+		logger.Printf("nmaNCs are %+v", nmaNCs)
 		if !skipNCVersionCheck {
 			for _, ncid := range ncs {
 				waitingForUpdate := false
@@ -855,7 +856,8 @@ func (service *HTTPRestService) isNCWaitingForUpdate(
 	}
 	// accept both upper and lower GUID from ncid(Swift_GUID)
 	// check each ncid in lower case if it's in ncVersionList
-	nmaProgrammedNCVersionStr, ok := ncVersionList[strings.ToLower(ncid)]
+	ncGuid := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
+	nmaProgrammedNCVersionStr, ok := ncVersionList[cns.SwiftPrefix+ncGuid]
 	if !ok {
 		// NMA doesn't have this NC that we need programmed yet, bail out
 		logger.Printf("[Azure CNS] Failed to get NC %s doesn't exist in NMAgent NC version list "+
