@@ -416,7 +416,6 @@ func (service *HTTPRestService) getAllNetworkContainerResponses(
 			nmaNCs[cns.SwiftPrefix+strings.ToLower(nc.NetworkContainerID)] = nc.Version
 		}
 
-		logger.Printf("nmaNCs are %+v", nmaNCs)
 		if !skipNCVersionCheck {
 			for _, ncid := range ncs {
 				waitingForUpdate := false
@@ -854,8 +853,8 @@ func (service *HTTPRestService) isNCWaitingForUpdate(
 			"Skipping GetNCVersionStatus check from NMAgent", ncVersion, ncid)
 		return true, types.NetworkContainerVfpProgramPending, ""
 	}
-	// accept both upper and lower GUID from ncid(Swift_GUID)
-	// check each ncid in lower case if it's in ncVersionList
+	// accept both upper and lower GUID from ncid(Swift_ncGuid)
+	// Split ncid by 'Swift_' and lower-case ncGuid(i.e, 89063DBF-AA31) and check if each ncid(Swift_ncGuid, i.e, Swift_89063dbf-aa31) is in ncVersionList
 	ncGuid := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
 	nmaProgrammedNCVersionStr, ok := ncVersionList[cns.SwiftPrefix+ncGuid]
 	if !ok {
