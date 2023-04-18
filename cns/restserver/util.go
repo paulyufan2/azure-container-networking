@@ -853,10 +853,10 @@ func (service *HTTPRestService) isNCWaitingForUpdate(
 			"Skipping GetNCVersionStatus check from NMAgent", ncVersion, ncid)
 		return true, types.NetworkContainerVfpProgramPending, ""
 	}
-	// accept both upper and lower GUID from ncid(Swift_ncGuid)
-	// Split ncid by 'Swift_' and lower-case ncGuid(i.e, 89063DBF-AA31) and check if each ncid(Swift_ncGuid, i.e, Swift_89063dbf-aa31) is in ncVersionList
-	ncGuid := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
-	nmaProgrammedNCVersionStr, ok := ncVersionList[cns.SwiftPrefix+ncGuid]
+	// accept both upper and lower GUID from ncid(Swift_ncGUID)
+	// Split ncid by 'Swift_' and lower-case ncGUID(i.e, 89063DBF-AA31) and check if each ncid(Swift_ncGUID, i.e, Swift_89063dbf-aa31) is in ncVersionList
+	ncGUID := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
+	nmaProgrammedNCVersionStr, ok := ncVersionList[cns.SwiftPrefix+ncGUID]
 	if !ok {
 		// NMA doesn't have this NC that we need programmed yet, bail out
 		logger.Printf("[Azure CNS] Failed to get NC %s doesn't exist in NMAgent NC version list "+
