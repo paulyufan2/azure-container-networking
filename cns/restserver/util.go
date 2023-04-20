@@ -413,7 +413,9 @@ func (service *HTTPRestService) getAllNetworkContainerResponses(
 		}
 		nmaNCs := map[string]string{}
 		for _, nc := range ncVersionListResp.Containers {
-			nmaNCs[cns.SwiftPrefix+strings.ToLower(nc.NetworkContainerID)] = nc.Version
+			// store nmaNCID as lower case to allow case insensitive comparasion with nc stored in CNS
+			nmaNCID := cns.SwiftPrefix + strings.ToLower(nc.NetworkContainerID)
+			nmaNCs[nmaNCID] = nc.Version
 		}
 
 		if !skipNCVersionCheck {
@@ -829,6 +831,16 @@ func (service *HTTPRestService) populateIPConfigInfoUntransacted(ipConfigStatus 
 	return nil
 }
 
+func lowerCaseNCGuid(ncid string) string {
+	ncidHasSwiftPrefix := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[0]) == cns.SwiftPrefix
+	ncGUID := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
+	if ncidHasSwiftPrefix {
+		return cns.SwiftPrefix + ncGUID
+	}
+
+	return ncGUID
+}
+
 // isNCWaitingForUpdate :- Determine whether NC version on NMA matches programmed version
 // Return error and waitingForUpdate as true only CNS gets response from NMAgent indicating
 // the VFP programming is pending
@@ -855,8 +867,8 @@ func (service *HTTPRestService) isNCWaitingForUpdate(
 	}
 	// accept both upper and lower GUID from ncid(Swift_ncGUID)
 	// Split ncid by 'Swift_' and lower-case ncGUID(i.e, 89063DBF-AA31) and check if each ncid(Swift_ncGUID, i.e, Swift_89063dbf-aa31) is in ncVersionList
-	ncGUID := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
-	nmaProgrammedNCVersionStr, ok := ncVersionList[cns.SwiftPrefix+ncGUID]
+	lowerCaseNCGUID := lowerCaseNCGuid(ncid)
+	nmaProgrammedNCVersionStr, ok := ncVersionList[lowerCaseNCGUID]
 	if !ok {
 		// NMA doesn't have this NC that we need programmed yet, bail out
 		logger.Printf("[Azure CNS] Failed to get NC %s doesn't exist in NMAgent NC version list "+
