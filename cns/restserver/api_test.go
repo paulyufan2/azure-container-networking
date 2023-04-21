@@ -1316,6 +1316,7 @@ func TestNCIDCaseSensitive(t *testing.T) {
 
 	for _, ncid := range upperCaseNCIDs {
 		_, returnCode, errMsg := svc.isNCWaitingForUpdate("0", ncid, ncVersionList)
+		// verify if Vfp programming completes
 		if returnCode != types.NetworkContainerVfpProgramComplete {
 			t.Fatalf("failed to verify TestNCIDCaseSensitive for ncid %s due to %s", ncid, errMsg)
 		}
