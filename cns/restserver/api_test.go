@@ -1299,17 +1299,20 @@ func TestNCIDCaseSensitive(t *testing.T) {
 		t.Fatalf("TestNCIDCaseSensitive failed with error:%+v", err)
 	}
 
-	// upper-case NCIDs
+	// test both upper-case NCIDs and cns-managed mode NCID
 	upperCaseNCID1 := "Swift_89063DBF-AA31-4BFC-9663-3842A361F188"
 	upperCaseNCID2 := "Swift_89063DBF-AA31-4BFC-9663-3842A361F189"
-	upperCaseNCIDs := []string{upperCaseNCID1, upperCaseNCID2}
+	managedModeNCID := "89063DBF-AA31-4BFC-9663-3842A361F188"
+	upperCaseNCIDs := []string{upperCaseNCID1, upperCaseNCID2, managedModeNCID}
 	nmaProgrammedNCVersionStr1 := "1"
 	nmaProgrammedNCVersionStr2 := "2"
+	nmaProgrammedNCVersionStr3 := "3"
 	ncVersionList := map[string]string{}
 
 	// add lower-case NCIDs to ncVersionList
 	ncVersionList["Swift_89063dbf-aa31-4bfc-9663-3842a361f188"] = nmaProgrammedNCVersionStr1
 	ncVersionList["Swift_89063dbf-aa31-4bfc-9663-3842a361f189"] = nmaProgrammedNCVersionStr2
+	ncVersionList["89063dbf-aa31-4bfc-9663-3842a361f188"] = nmaProgrammedNCVersionStr3
 
 	for _, ncid := range upperCaseNCIDs {
 		_, returnCode, errMsg := svc.isNCWaitingForUpdate("0", ncid, ncVersionList)

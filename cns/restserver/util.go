@@ -831,14 +831,16 @@ func (service *HTTPRestService) populateIPConfigInfoUntransacted(ipConfigStatus 
 	return nil
 }
 
+// lowerCaseNCGuid(): split NCID by "_" and lowercase NC GUID; i.e,"Swift_ABCD-CD" -> "Swift_abcd-cd"
+// Check if NCID starts with "Swift_"; if not, it is in managed mode; i.e, "ABCDCD"-> "abcdcd"
 func lowerCaseNCGuid(ncid string) string {
-	ncidHasSwiftPrefix := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[0]) == cns.SwiftPrefix
-	ncGUID := strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
+	ncidHasSwiftPrefix := strings.Contains(ncid, cns.SwiftPrefix)
+
 	if ncidHasSwiftPrefix {
-		return cns.SwiftPrefix + ncGUID
+		return cns.SwiftPrefix + strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
 	}
 
-	return ncGUID
+	return strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[0])
 }
 
 // isNCWaitingForUpdate :- Determine whether NC version on NMA matches programmed version
@@ -865,7 +867,7 @@ func (service *HTTPRestService) isNCWaitingForUpdate(
 			"Skipping GetNCVersionStatus check from NMAgent", ncVersion, ncid)
 		return true, types.NetworkContainerVfpProgramPending, ""
 	}
-	// accept both upper and lower GUID from ncid(Swift_ncGUID)
+	// accept both upper and lower GUID from ncid(Swift_ncGUID) and store lowercase GUID at ncVersionList
 	// Split ncid by 'Swift_' and lower-case ncGUID(i.e, 89063DBF-AA31) and check if each ncid(Swift_ncGUID, i.e, Swift_89063dbf-aa31) is in ncVersionList
 	lowerCaseNCGUID := lowerCaseNCGuid(ncid)
 	nmaProgrammedNCVersionStr, ok := ncVersionList[lowerCaseNCGUID]
