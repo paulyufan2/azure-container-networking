@@ -834,7 +834,7 @@ func (service *HTTPRestService) populateIPConfigInfoUntransacted(ipConfigStatus 
 // lowerCaseNCGuid func splits NCID by "_" and lowercase NC GUID; i.e,"Swift_ABCD-CD" -> "Swift_abcd-cd"
 // Check if NCID starts with "Swift_"; if not, it is in CNS managed mode; i.e, "ABCDCD"-> "abcdcd"
 func lowerCaseNCGuid(ncid string) string {
-	ncidHasSwiftPrefix := strings.Contains(ncid, cns.SwiftPrefix)
+	ncidHasSwiftPrefix := strings.HasPrefix(ncid, cns.SwiftPrefix)
 
 	if ncidHasSwiftPrefix {
 		return cns.SwiftPrefix + strings.ToLower(strings.Split(ncid, cns.SwiftPrefix)[1])
