@@ -413,7 +413,7 @@ func (service *HTTPRestService) getAllNetworkContainerResponses(
 		}
 		nmaNCs := map[string]string{}
 		for _, nc := range ncVersionListResp.Containers {
-			// store nmaNCID as lower case to allow case insensitive comparasion with nc stored in CNS
+			// store nmaNCID as lower case to allow case insensitive comparison with nc stored in CNS
 			nmaNCID := cns.SwiftPrefix + strings.ToLower(nc.NetworkContainerID)
 			nmaNCs[nmaNCID] = nc.Version
 		}
